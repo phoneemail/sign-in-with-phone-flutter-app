@@ -43,13 +43,15 @@ To integrate the "Sign in with Phone" functionality into your Next.js project, f
     ```
 
 4. **Change the configuration:**
-Before you implement this step you must update `API_KEY`, `PHONE_COUNTRY` and `PHONE_NUMBER` in sign-in-with-phone-flutter-app\lib\utils\app_constants.dart`
+Before you implement this step you must update `API_KEY`, `PHONE_COUNTRY` and `PHONE_NUMBER` in `sign-in-with-phone-flutter-app\lib\utils\app_constants.dart`
 
-NOTES -
+    NOTES -
 
-API_KEY: Get it from https://admin.phone.email under profile details section.
-PHONE_COUNTRY: Country code used while login into https://admin.phone.email. Example - static const PHONE_COUNTRY = '+91';
-PHONE_NUMBER: Phone number used while login into https://admin.phone.email. Example - static const PHONE_NUMBER = '9999988888';
+    API_KEY: Get it from https://admin.phone.email under profile details section.
+
+    PHONE_COUNTRY: Country code used while login into https://admin.phone.email. Example - static const PHONE_COUNTRY = '+91';
+
+    PHONE_NUMBER: Phone number used while login into https://admin.phone.email. Example - static const PHONE_NUMBER = '9999988888';
 
 
 ## Usage
