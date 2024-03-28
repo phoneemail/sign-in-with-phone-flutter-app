@@ -64,11 +64,9 @@ To utilize the application:
 
 1. **Start the application:**
 
-    ```bash
-    flutter run
-    ```
+    Run the app on emulator/mobile to test.
 
-
+ 
 ## Example Demo
 
 Experience the seamless authentication process firsthand with our [demo](https://www.phone.email/demo-login). Our demo provides a live demonstration of the "Sign in with Phone" plugin, showcasing its functionality and ease of use. Explore the demo to understand how the plugin can enhance the authentication experience on your website. 
