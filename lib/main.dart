@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:phone_email/screens/auth_screen.dart';
-import 'package:phone_email/screens/email_list_screen.dart';
-import 'package:phone_email/utils/app_services.dart';
-import 'package:phone_email/widgets/sign_in_button.dart';
+import 'package:phone_email_auth/phone_email_auth.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  /// Initialize phone email function with Client Id
+
+  PhoneEmail.initializeApp(clientId: '19442901526990255119');
+
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,180 +31,159 @@ class MyApp extends StatelessWidget {
       title: 'Phone Email',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Color.fromARGB(255, 4, 201, 135),
+          seedColor: const Color.fromARGB(255, 4, 201, 135),
         ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(),
+      home: const PhoneEmailAuthWidget(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class PhoneEmailAuthWidget extends StatefulWidget {
+  const PhoneEmailAuthWidget({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<PhoneEmailAuthWidget> createState() => _PhoneEmailAuthWidgetState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  String? jwtToken;
-  bool isUserLoggedIn = false;
-  String totalEmailCount = '';
-  String phoneNumner = '';
-  bool isLoading = false;
+class _PhoneEmailAuthWidgetState extends State<PhoneEmailAuthWidget> {
+  String userAccessToken = "";
+  String jwtUserToken = "";
+  bool hasUserLogin = false;
+  PhoneEmailUserModel? phoneEmailUserModel;
+  final phoneEmail = PhoneEmail();
+
+  String emailCount = '';
+
+  /// Get email count after getting jwt token
+  void getTotalEmailCount() async {
+    await PhoneEmail.getEmailCount(
+      jwtUserToken,
+      onEmailCount: (count) {
+        setState(() {
+          emailCount = count;
+        });
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('Phone Email'),
+        title: const Text('Phone Email'),
       ),
-      body: Center(
-        child: isLoading
-            ? Center(child: CircularProgressIndicator())
-            : isUserLoggedIn
-                ? Center(
-                    child: Container(
-                      margin: EdgeInsets.all(16),
-                      padding: EdgeInsets.all(16),
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade400),
-                        borderRadius: BorderRadius.circular(8),
-                        color:
-                            Color.fromARGB(255, 4, 201, 135).withOpacity(0.2),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'You are logged in with',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            phoneNumner,
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                isUserLoggedIn = false;
-                              });
-                            },
-                            child: Text(
-                              'Logout',
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                : SignInButton(
-                    onPressed: () {
-                      /*
-                  * Navigate to the authentication webview
-                  * */
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) {
-                            return AuthScreen();
-                          },
-                        ),
-                      ).then((value) {
-                        /*
-                        * Check if user perform login and get token
-                        * OR only close the screen
-                        * Also check data pop back from screen
-                        * */
-                        if (value != null && (value is Map)) {
-                          jwtToken = value['jwtToken'];
-
-                          /// Check token is not expired and valid
-                          if (AppService.isValidJwtToken(jwtToken!)) {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            AppService.getLoginUserEmailCount(
-                              jwtToken!,
-                              onEmailCount: (phoneNumber, count) {
-                                isUserLoggedIn = true;
-                                phoneNumner = phoneNumber;
-                                totalEmailCount = count;
-                                isLoading = false;
-                                setState(() {});
-                              },
-                            );
-                          } else {
-                            setState(() {
-                              isUserLoggedIn = false;
-                            });
-                          }
-                        }
-                      });
-                    },
-                  ),
-      ),
-      floatingActionButton: isUserLoggedIn
-          ? FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) {
-                      return EmailListScreen();
-                    },
-                  ),
-                );
-              },
-              child: Stack(
-                children: [
-                  Icon(
-                    Icons.mail_outline_rounded,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (hasUserLogin) ...[
+              if (phoneEmailUserModel != null) ...[
+                Divider(
+                  thickness: 0.5,
+                  color: Colors.grey.shade400,
+                ),
+                const SizedBox(height: 16.0),
+                const Text(
+                  "User Data",
+                  style: TextStyle(
+                    fontSize: 22,
                     color: Colors.black,
-                    size: 40,
                   ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Container(
-                      height: 20,
-                      width: 20,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.red,
-                      ),
-                      child: Center(
-                        child: Text(
-                          '$totalEmailCount',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12.2,
-                          ),
-                        ),
-                      ),
-                    ),
+                ),
+                const SizedBox(height: 16.0),
+                Text(
+                  "Phone Number : ${phoneEmailUserModel?.countryCode} ${phoneEmailUserModel?.phoneNumber}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
                   ),
-                ],
+                ),
+                const SizedBox(height: 16.0),
+              ],
+
+            ],
+
+            /// Default button
+            if (!hasUserLogin) ...[
+              const SizedBox(height: 16.0),
+
+              /// Button With extra rounded corner
+              /// and background color
+              /// and different text
+              Align(
+                alignment: Alignment.center,
+                child: PhoneLoginButton(
+                  borderRadius: 15,
+                  buttonColor: Colors.amber,
+                  label: 'Sign in with Number',
+                  onSuccess: (String accessTokenn, String jwtToken) {
+                    // debugPrint("Access Token :: $accessTokenn");
+                    // debugPrint("Client ID :: $jwtToken");
+                    if (accessTokenn.isNotEmpty) {
+                      setState(() {
+                        userAccessToken = accessTokenn;
+                        jwtUserToken = jwtToken;
+                        hasUserLogin = true;
+                      });
+
+                      PhoneEmail.getUserInfo(
+                        accessToken: userAccessToken,
+                        clientId: phoneEmail.clientId,
+                        onSuccess: (userData) {
+                          setState(() {
+                            phoneEmailUserModel = userData;
+                            var countryCode = phoneEmailUserModel?.countryCode;
+                            var phoneNumber = phoneEmailUserModel?.phoneNumber;
+                            debugPrint("countryCode :: $countryCode");
+                            debugPrint("phoneNumber :: $phoneNumber");
+                            getTotalEmailCount();
+
+                          });
+                        },
+                      );
+
+                    }
+                  },
+                ),
               ),
-            )
-          : Offstage(),
+            ],
+            const SizedBox(height: 16.0),
+
+
+            /// Logout
+            if (hasUserLogin) ...[
+              Align(
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  onPressed: () {
+                    hasUserLogin = false;
+                    userAccessToken = "";
+                    jwtUserToken = "";
+                    phoneEmailUserModel = null;
+                    emailCount = '0';
+                    setState(() {});
+                  },
+                  child: const Text("Logout"),
+                ),
+              ),
+            ]
+
+          ],
+          // ],
+        ),
+      ),
+
+      /// Email button
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: hasUserLogin
+          ? EmailAlertButton(
+        jwtToken: jwtUserToken,
+      )
+          : const Offstage(),
     );
   }
 }
