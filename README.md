@@ -49,9 +49,6 @@ To integrate the "Sign in with Phone" functionality into your Next.js project, f
 
 4. **Initialization:**
 
-<<<<<<< HEAD
-Initialize phone email plugin
-
     ```dart
     PhoneEmail.initializeApp(clientId: 'YOUR_CLIENT_ID',);
     ```
@@ -112,72 +109,7 @@ Initialize phone email plugin
         ) : const Offstage(),
     );
     ```
-=======
-Initialize phone email plugin
-
-   ```dart
-   PhoneEmail.initializeApp(clientId: 'YOUR_CLIENT_ID',);
-   ```
-
-## Note:
-clientId : Set clientId which you obtained from Profile Details section of [Admin Dashboard](https://admin.phone.email/) of Phone Email.
-
-# Add Phone Email Login Button
-
-   ```dart
-       
-       child: PhoneLoginButton(
-       borderRadius: 8,
-       buttonColor: Colors.teal,
-       label: 'Sign in with Phone',
-       onSuccess: (String accessToken, String jwtToken) {
-         if (accessToken.isNotEmpty) {
-           setState(() {
-             userAccessToken = accessToken;
-             jwtUserToken = jwtToken;
-             hasUserLogin = true;
-           });
-         }
-       },
-       )
-   ```
-
-The PhoneLoginButton will return the `accessToken` and `jwtToken`, which are necessary for obtaining the verified phone number.
-
-# Get Verified phone number:
-
-Once you've obtained the `accessToken`, get verified phone number by calling the `getUserInfo()` function. Use the following code snippet to retrieve the verified phone number.
-
-   ```dart
-           PhoneEmail.getUserInfo(
-           accessToken: userAccessToken,
-           clientId: phoneEmail.clientId,
-           onSuccess: (userData) {
-               setState(() {
-               phoneEmailUserModel = userData;
-               var countryCode = phoneEmailUserModel?.countryCode;
-               var phoneNumber = phoneEmailUserModel?.phoneNumber;
    
-               // Use this verified phone number to register user and create your session
-   
-               });
-           },
-           );
-   ```
-
-# Display Email Alert:
-
-Integrate an email alert icon on your screen for a successfully authenticated user. Use the following code snippet to fetch the unread email count and display the email icon.
-
-   ```dart
-           floatingActionButton: hasUserLogin
-               ? EmailAlertButton(
-               jwtToken: jwtUserToken,
-               ) : const Offstage(),
-           );
-   ```
->>>>>>> 99a0e69109edaeabdf4078c20fe3506c1e46c0ef
-
 ## Usage
 
 To utilize the application:
