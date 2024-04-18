@@ -6,7 +6,7 @@ void main() {
 
   /// Initialize phone email function with Client Id
 
-  PhoneEmail.initializeApp(clientId: '19442901526990255119');
+  PhoneEmail.initializeApp(clientId: 'YOUR_CLIENT_ID');
 
   runApp(const MyApp());
 }
