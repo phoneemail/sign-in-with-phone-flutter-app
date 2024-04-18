@@ -15,6 +15,7 @@ Welcome to the Flutter demo repository for integrating "Sign in with Phone" func
 Phone Email presents a revolutionary solution for user authentication - "Sign in with Phone". Our plugin enables mobile apps & websites to offer seamless phone number verification to users, enhancing security and user experience. Similar to Firebase phone authentication, our solution embeds a "Log in with phone" button on client websites. Upon clicking, a verification window prompts users to enter their country code and mobile number. After successful verification through OTP sent to the user's mobile, control redirects back to the client website with an access token. Subsequently, passing this access token to the getuser REST API retrieves the verified mobile number.
 
 ### Key Benefits:
+
 - **Cost-Effective:** Minimal or no cost for phone verification.
 - **Enhanced Security:** OTP-based verification ensures secure authentication.
 - **Seamless Integration:** Easy integration into existing web applications.
@@ -48,6 +49,70 @@ To integrate the "Sign in with Phone" functionality into your Next.js project, f
 
 4. **Initialization:**
 
+<<<<<<< HEAD
+Initialize phone email plugin
+
+    ```dart
+    PhoneEmail.initializeApp(clientId: 'YOUR_CLIENT_ID',);
+    ```
+
+    ## Note:
+    clientId : Set clientId which you obtained from Profile Details section of [Admin Dashboard](https://admin.phone.email/) of Phone Email.
+
+5. Add Phone Email Login Button
+
+   ```dart        
+    child: PhoneLoginButton(
+    borderRadius: 8,
+    buttonColor: Colors.teal,
+    label: 'Sign in with Phone',
+    onSuccess: (String accessToken, String jwtToken) {
+        if (accessToken.isNotEmpty) {
+        setState(() {
+            userAccessToken = accessToken;
+            jwtUserToken = jwtToken;
+            hasUserLogin = true;
+        });
+        }
+    },
+    )
+    ```
+
+   The PhoneLoginButton will return the `accessToken` and `jwtToken`, which are necessary for obtaining the verified phone number.
+
+6. Get Verified phone number:
+
+   Once you've obtained the `accessToken`, get verified phone number by calling the `getUserInfo()` function. Use the following code snippet to retrieve the verified phone number.
+
+   ```dart
+    PhoneEmail.getUserInfo(
+    accessToken: userAccessToken,
+    clientId: phoneEmail.clientId,
+    onSuccess: (userData) {
+        setState(() {
+        phoneEmailUserModel = userData;
+        var countryCode = phoneEmailUserModel?.countryCode;
+        var phoneNumber = phoneEmailUserModel?.phoneNumber;
+
+        // Use this verified phone number to register user and create your session
+
+        });
+    },
+    );
+   ```
+
+7. Display Email Alert:
+
+   Integrate an email alert icon on your screen for a successfully authenticated user. Use the following code snippet to fetch the unread email count and display the email icon.
+
+    ```dart
+    floatingActionButton: hasUserLogin
+        ? EmailAlertButton(
+        jwtToken: jwtUserToken,
+        ) : const Offstage(),
+    );
+    ```
+=======
 Initialize phone email plugin
 
    ```dart
@@ -111,6 +176,7 @@ Integrate an email alert icon on your screen for a successfully authenticated us
                ) : const Offstage(),
            );
    ```
+>>>>>>> 99a0e69109edaeabdf4078c20fe3506c1e46c0ef
 
 ## Usage
 
@@ -118,16 +184,16 @@ To utilize the application:
 
 1. **Start the application:**
 
-    Run the app on emulator/mobile to test.
+   Run the app on emulator/mobile to test.
 
- 
+
 ## Example Demo
 
-Experience the seamless authentication process firsthand with our [demo](https://www.phone.email/demo-login). Our demo provides a live demonstration of the "Sign in with Phone" plugin, showcasing its functionality and ease of use. Explore the demo to understand how the plugin can enhance the authentication experience on your website. 
+Experience the seamless authentication process firsthand with our [demo](https://www.phone.email/demo-login). Our demo provides a live demonstration of the "Sign in with Phone" plugin, showcasing its functionality and ease of use. Explore the demo to understand how the plugin can enhance the authentication experience on your website.
 
 ## Documentation
 
-For comprehensive documentation on integrating the "Sign in with Phone" plugin into your flutter web application, refer to our [documentation](https://www.phone.email/docs#flutter). The documentation provides detailed instructions, code samples, and configuration options to help you seamlessly integrate the plugin into your project. 
+For comprehensive documentation on integrating the "Sign in with Phone" plugin into your flutter web application, refer to our [documentation](https://www.phone.email/docs#flutter). The documentation provides detailed instructions, code samples, and configuration options to help you seamlessly integrate the plugin into your project.
 
 ## Website
 
