@@ -41,7 +41,7 @@ To integrate the "Sign in with Phone" functionality into your Next.js project, f
 
     ```bash
     dependencies:
-    phone_email_auth: ^0.0.1
+    phone_email_auth: ^0.0.3
    
     //Run following command to sync dependencies
     flutter pub get
