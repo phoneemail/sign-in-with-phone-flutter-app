@@ -118,14 +118,14 @@ class _PhoneEmailAuthWidgetState extends State<PhoneEmailAuthWidget> {
                 alignment: Alignment.center,
                 child: PhoneLoginButton(
                   borderRadius: 15,
-                  buttonColor: Colors.amber,
+                  buttonColor: Colors.purple,
                   label: 'Sign in with Number',
-                  onSuccess: (String accessTokenn, String jwtToken) {
-                    // debugPrint("Access Token :: $accessTokenn");
+                  onSuccess: (String accessToken, String jwtToken) {
+                    // debugPrint("Access Token :: $accessToken");
                     // debugPrint("Client ID :: $jwtToken");
-                    if (accessTokenn.isNotEmpty) {
+                    if (accessToken.isNotEmpty) {
                       setState(() {
-                        userAccessToken = accessTokenn;
+                        userAccessToken = accessToken;
                         jwtUserToken = jwtToken;
                         hasUserLogin = true;
                       });
